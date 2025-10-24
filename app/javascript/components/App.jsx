@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -18,6 +18,7 @@ const theme = createTheme({
     background: {
       default: "#0A0A0A",
       paper: "#1A1A1A",
+      light: "#3a3a3aff",
     },
     text: {
       primary: "#FFFFFF",
@@ -33,18 +34,36 @@ const theme = createTheme({
 });
 
 const App = () => {
+  const [selectedUser, setSelectedUser] = useState(() => {
+    // Initialize from localStorage
+    const savedUser = localStorage.getItem("selectedUser");
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  // Handle selected user and save to localStorage
+  const handleSetSelectedUser = (user) => {
+    setSelectedUser(user);
+    if (user) {
+      localStorage.setItem("selectedUser", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("selectedUser");
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        {/* <Layout>
-          
-        </Layout> */}
+        {/* <Layout> */}
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/chat" element={<Chat />} />
+          <Route
+            path="/"
+            element={<Home setSelectedUser={handleSetSelectedUser} />}
+          />
+          <Route path="/chat" element={<Chat user={selectedUser} />} />
           <Route path="/users" element={<Users />} />
         </Routes>
+        {/* </Layout> */}
       </Router>
     </ThemeProvider>
   );

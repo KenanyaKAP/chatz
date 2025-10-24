@@ -9,6 +9,7 @@ import {
   Stack,
   Divider,
   Avatar,
+  CircularProgress,
 } from "@mui/material";
 import {
   Person as PersonIcon,
@@ -17,7 +18,7 @@ import {
 } from "@mui/icons-material";
 import { Chat as ChatIcon, People as PeopleIcon } from "@mui/icons-material";
 
-const Home = () => {
+const Home = ({ setSelectedUser }) => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -39,6 +40,11 @@ const Home = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Function to handle Login
+  const handleLogin = (user) => {
+    setSelectedUser(user);
   };
 
   useEffect(() => {
@@ -92,6 +98,11 @@ const Home = () => {
             Select which user you want to login as to start chatting:
           </Typography>
           <Stack sx={{ mt: 5 }}>
+            {loading && (
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <CircularProgress />
+              </Box>
+            )}
             {users.map((user, index) => (
               // <>
               //   <Box key={user.id}>
@@ -153,9 +164,10 @@ const Home = () => {
                         px: 5,
                         width: { xs: "100%", sm: "auto" },
                       }}
-                      color="primary"
+                      color="secondary"
                       component={Link}
                       to="/chat"
+                      onClick={() => handleLogin(user)}
                     >
                       Login
                     </Button>
@@ -180,7 +192,9 @@ const Home = () => {
               </Box>
             ))}
           </Stack>
-          <Button sx={{ mt: 5, p: 2 }}>Create new User</Button>
+          <Button disabled={loading} sx={{ mt: 5, p: 2 }}>
+            Create new User
+          </Button>
         </Paper>
       </Box>
     </Container>
