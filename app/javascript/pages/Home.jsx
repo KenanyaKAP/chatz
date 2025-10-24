@@ -47,6 +47,37 @@ const Home = ({ setSelectedUser }) => {
     setSelectedUser(user);
   };
 
+  // Function to handle Delete
+  const handleDelete = async (username) => {
+    if (!confirm(`Are you sure you want to delete user @${username}?`)) {
+      return;
+    }
+
+    try {
+      const csrfToken = document.querySelector(
+        'meta[name="csrf-token"]'
+      )?.content;
+
+      const response = await fetch(`/api/v1/users/${username}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": csrfToken,
+        },
+      });
+
+      if (response.ok) {
+        // Refresh the users list after deletion
+        fetchUsers();
+      } else {
+        alert("Failed to delete user");
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("Error deleting user");
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -179,8 +210,7 @@ const Home = ({ setSelectedUser }) => {
                         width: { xs: "100%", sm: "auto" },
                       }}
                       color="error"
-                      component={Link}
-                      to="/chat"
+                      onClick={() => handleDelete(user.attributes?.username)}
                     >
                       Delete
                     </Button>
