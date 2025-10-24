@@ -7,3 +7,16 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+users = User.create([
+  { username: "boteng", fullname: "Boteng Z" },
+  { username: "alice", fullname: "Alice Wonderland" },
+  { username: "bob", fullname: "Bob Builder" }
+])
+
+messages = Message.create([
+  { sender: users[0], recipient: users[1], content: "Hey Alice!" },
+  { sender: users[1], recipient: users[0], content: "Yo, hi Boteng!" },
+  { sender: users[0], recipient: users[2], content: "Hey Bob!" },
+  { sender: users[2], recipient: users[1], content: "Hi Alice!" }
+])
