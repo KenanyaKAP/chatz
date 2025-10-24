@@ -1,13 +1,37 @@
 import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import Layout from "./Layout";
+import Home from "../pages/Home";
+import Chat from "../pages/Chat";
+import Users from "../pages/Users";
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#1976d2",
+    },
+    secondary: {
+      main: "#dc004e",
+    },
+  },
+});
 
 const App = () => {
   return (
-    <div>
-      <h1>Hello from React!</h1>
-      <p>
-        This is a React component rendered in a Rails application using Vite.
-      </p>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/users" element={<Users />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </ThemeProvider>
   );
 };
 
