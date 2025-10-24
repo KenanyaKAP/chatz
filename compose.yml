@@ -1,0 +1,11 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: chatz_development
+      POSTGRES_USER: chatz
+      POSTGRES_PASSWORD: chatzi@123
+    volumes:
+      - ~/Documents/docker-volumes/chatz_db:/var/lib/postgresql/data
+    ports:
+      - "6543:5432"
