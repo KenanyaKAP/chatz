@@ -16,6 +16,9 @@ const theme = createTheme({
       main: "#dc004e",
     },
   },
+  typography: {
+    fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif',
+  },
 });
 
 const App = () => {
@@ -23,13 +26,14 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/users" element={<Users />} />
-          </Routes>
-        </Layout>
+        {/* <Layout>
+          
+        </Layout> */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/users" element={<Users />} />
+        </Routes>
       </Router>
     </ThemeProvider>
   );

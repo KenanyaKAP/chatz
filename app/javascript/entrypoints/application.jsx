@@ -30,7 +30,10 @@ console.log(
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
 
-// Example: Import a React component in app/javascript/components/App.jsx
+// Import fonts
+import "../styles/fonts.css";
+
+// Import a React component ../components/App.jsx
 import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "../components/App";
