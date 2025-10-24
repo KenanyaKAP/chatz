@@ -229,6 +229,9 @@ const Chat = ({ user }) => {
           {/* <IconButton component={Link} to="/" sx={{ mr: 2 }}>
             <ArrowBackIcon color="primary" />
           </IconButton> */}
+          <Typography variant="h5" color="text.secondary">
+            @{user.attributes?.username}
+          </Typography>
           <Typography
             variant="h4"
             component="h1"
@@ -339,6 +342,29 @@ const Chat = ({ user }) => {
                   height: "85vh",
                 }}
               >
+                {/* Chat Header */}
+                <Paper elevation={2} sx={{ p: 4 }}>
+                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+                    <Avatar
+                      sx={{ bgcolor: "secondary.main", width: 56, height: 56 }}
+                      src={`/images/avatar/${
+                        (users.findIndex((u) => u.id === selectedUser.id) %
+                          10) +
+                        1
+                      }.png`}
+                    />
+                    <Box>
+                      <Typography variant="h6" color="text.primary">
+                        {selectedUser.attributes?.fullname ||
+                          selectedUser.attributes?.username}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        @{selectedUser.attributes?.username}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Paper>
+                <Divider color="white" />
                 {/* Messages List */}
                 <Paper
                   elevation={3}
