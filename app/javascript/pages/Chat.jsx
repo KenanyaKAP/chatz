@@ -1,31 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  Box,
-  TextField,
-  Button,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  Typography,
-  Avatar,
-  Divider,
-  Container,
-  IconButton,
-  Drawer,
-  useTheme,
-  useMediaQuery,
-  ListItemAvatar,
-  ListItemButton,
-} from "@mui/material";
-import {
-  Send as SendIcon,
-  Person as PersonIcon,
-  ArrowBack as ArrowBackIcon,
-  Menu as MenuIcon,
-  Logout as LogoutIcon,
-} from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import { Box, Container, Drawer, useTheme, useMediaQuery } from "@mui/material";
+import ChatHeader from "../components/chat/ChatHeader";
+import UserList from "../components/chat/UserList";
+import EmptyState from "../components/chat/EmptyState";
+import ChatRoom from "../components/chat/ChatRoom";
 
 const Chat = ({ user }) => {
   const navigate = useNavigate();
@@ -33,21 +12,14 @@ const Chat = ({ user }) => {
 
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const [users, setUsers] = useState([]);
-
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-
   const [selectedUser, setSelectedUser] = useState(user);
 
-  const drawerWidth = 280;
+  const [users, setUsers] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Function to get random avatar number (1-10)
-  const getRandomAvatar = () => {
-    return Math.floor(Math.random() * 10) + 1;
-  };
+  const drawerWidth = 280;
 
   // Redirect to home if no user is selected
   useEffect(() => {
@@ -117,13 +89,6 @@ const Chat = ({ user }) => {
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
-
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -140,76 +105,6 @@ const Chat = ({ user }) => {
     navigate("/");
   };
 
-  const drawer = (
-    <Box
-      sx={{
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box sx={{ p: 2, bgcolor: "background.paper", color: "white" }}>
-        <Typography variant="h6">Friend Lists</Typography>
-      </Box>
-      <Divider color="white" />
-
-      {/* Scrollable user list */}
-      <Box sx={{ flexGrow: 1, overflow: "auto" }}>
-        <List>
-          {users.length === 0 ? (
-            <ListItem>
-              <ListItemText
-                primary="No other users"
-                secondary="You're the only one here!"
-              />
-            </ListItem>
-          ) : (
-            users.map((usr, index) => (
-              <ListItemButton
-                key={usr.id}
-                selected={selectedUser?.id === usr.id}
-                onClick={() => handleUserSelect(usr)}
-                sx={{
-                  "&.Mui-selected": {
-                    bgcolor: "background.light",
-                    "&:hover": {
-                      bgcolor: "background.light",
-                    },
-                  },
-                }}
-              >
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{ bgcolor: "secondary.main" }}
-                    src={`/images/avatar/${(index % 10) + 1}.png`}
-                  ></Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={usr.attributes?.fullname || usr.attributes?.username}
-                  secondary={`@${usr.attributes?.username}`}
-                />
-              </ListItemButton>
-            ))
-          )}
-        </List>
-      </Box>
-
-      {/* Logout button at the bottom */}
-      <Box sx={{ p: 2, borderTop: 1, borderColor: "white" }}>
-        <Button
-          variant="contained"
-          color="secondary"
-          fullWidth
-          startIcon={<LogoutIcon />}
-          onClick={handleLogout}
-          sx={{ py: 1.5 }}
-        >
-          Logout
-        </Button>
-      </Box>
-    </Box>
-  );
-
   useEffect(() => {
     fetchMessages();
     fetchUsers();
@@ -220,28 +115,7 @@ const Chat = ({ user }) => {
   return (
     <Container maxWidth="xl">
       <Box sx={{ my: 4 }}>
-        <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-          {isMobile && (
-            <IconButton onClick={handleDrawerToggle} sx={{ mr: 2 }}>
-              <MenuIcon color="primary" />
-            </IconButton>
-          )}
-          {/* <IconButton component={Link} to="/" sx={{ mr: 2 }}>
-            <ArrowBackIcon color="primary" />
-          </IconButton> */}
-          <Typography variant="h5" color="text.secondary">
-            @{user.attributes?.username}
-          </Typography>
-          <Typography
-            variant="h4"
-            component="h1"
-            fontFamily={"Alfa Slab One, cursive"}
-            color="primary"
-            sx={{ mx: "auto", fontSize: { xs: "2rem", md: "2.5rem" } }}
-          >
-            ChatZ
-          </Typography>
-        </Box>
+        <ChatHeader user={user} onMenuClick={handleDrawerToggle} />
 
         {/* Drawer for user list */}
         <Box sx={{ display: "flex" }}>
@@ -262,7 +136,12 @@ const Chat = ({ user }) => {
               },
             }}
           >
-            {drawer}
+            <UserList
+              users={users}
+              selectedUser={selectedUser}
+              onUserSelect={handleUserSelect}
+              onLogout={handleLogout}
+            />
           </Drawer>
 
           {/* Desktop drawer (permanent) */}
@@ -279,169 +158,33 @@ const Chat = ({ user }) => {
             }}
             open
           >
-            {drawer}
+            <UserList
+              users={users}
+              selectedUser={selectedUser}
+              onUserSelect={handleUserSelect}
+              onLogout={handleLogout}
+            />
           </Drawer>
 
           {/* Main content area */}
           <Box
             sx={{
-              // display: "flex",
-              // flexDirection: "column",
-              // flexGrow: 1,
               ml: { md: 2 },
               width: "100%",
             }}
           >
             {selectedUser === user ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  flexDirection: { xs: "column", sm: "row" },
-                  justifyContent: "center",
-                  height: "85vh",
-                  textAlign: "center",
-                }}
-              >
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontSize: { xs: "1.2rem", md: "1.5rem" },
-                    maxWidth: "600px",
-                    px: 2,
-                  }}
-                >
-                  Start
-                </Typography>
-                <Typography
-                  fontFamily={"Alfa Slab One, cursive"}
-                  sx={{
-                    fontSize: { xs: "1.5rem", md: "2rem" },
-                  }}
-                >
-                  ChatZ
-                </Typography>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontSize: { xs: "1.2rem", md: "1.5rem" },
-                    maxWidth: "600px",
-                    px: 2,
-                  }}
-                >
-                  by selecting a friend from the list
-                </Typography>
-              </Box>
+              <EmptyState />
             ) : (
-              // Chat Room
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flexGrow: 1,
-                  height: "85vh",
-                }}
-              >
-                {/* Chat Header */}
-                <Paper elevation={2} sx={{ p: 4 }}>
-                  <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    <Avatar
-                      sx={{ bgcolor: "secondary.main", width: 56, height: 56 }}
-                      src={`/images/avatar/${
-                        (users.findIndex((u) => u.id === selectedUser.id) %
-                          10) +
-                        1
-                      }.png`}
-                    />
-                    <Box>
-                      <Typography variant="h6" color="text.primary">
-                        {selectedUser.attributes?.fullname ||
-                          selectedUser.attributes?.username}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        @{selectedUser.attributes?.username}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Paper>
-                <Divider color="white" />
-                {/* Messages List */}
-                <Paper
-                  elevation={3}
-                  sx={{
-                    flexGrow: 1,
-                    overflow: "auto",
-                    mb: 2,
-                    p: 2,
-                    minHeight: 0,
-                  }}
-                >
-                  <List>
-                    {messages.length === 0 ? (
-                      <ListItem>
-                        <ListItemText
-                          primary="No messages yet"
-                          secondary="Start the conversation!"
-                        />
-                      </ListItem>
-                    ) : (
-                      messages.map((message) => (
-                        <div key={message.id}>
-                          <ListItem alignItems="flex-start">
-                            <Avatar sx={{ mr: 2, bgcolor: "primary.main" }}>
-                              <PersonIcon />
-                            </Avatar>
-                            <ListItemText
-                              primary={
-                                <Typography
-                                  variant="subtitle2"
-                                  color="text.primary"
-                                >
-                                  {message.attributes?.user_name ||
-                                    `User ${message.attributes?.user_id}`}
-                                </Typography>
-                              }
-                              secondary={
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  {message.attributes?.content}
-                                </Typography>
-                              }
-                            />
-                          </ListItem>
-                          <Divider variant="inset" component="li" />
-                        </div>
-                      ))
-                    )}
-                  </List>
-                </Paper>
-
-                {/* Message Input */}
-                <Paper elevation={2} sx={{ p: 2 }}>
-                  <Box sx={{ display: "flex", gap: 1 }}>
-                    <TextField
-                      fullWidth
-                      multiline
-                      maxRows={3}
-                      placeholder="Type your message..."
-                      value={newMessage}
-                      onChange={(e) => setNewMessage(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      disabled={loading}
-                    />
-                    <Button
-                      variant="contained"
-                      onClick={sendMessage}
-                      disabled={loading || !newMessage.trim()}
-                      endIcon={<SendIcon />}
-                    >
-                      Send
-                    </Button>
-                  </Box>
-                </Paper>
-              </Box>
+              <ChatRoom
+                selectedUser={selectedUser}
+                users={users}
+                messages={messages}
+                newMessage={newMessage}
+                setNewMessage={setNewMessage}
+                onSendMessage={sendMessage}
+                loading={loading}
+              />
             )}
           </Box>
         </Box>
