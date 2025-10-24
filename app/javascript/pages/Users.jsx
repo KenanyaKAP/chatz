@@ -49,7 +49,7 @@ const Users = () => {
       <Box sx={{ my: 4 }}>
         <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
           <IconButton component={Link} to="/" sx={{ mr: 2 }}>
-            <ArrowBackIcon />
+            <ArrowBackIcon color="primary" />
           </IconButton>
           <Typography variant="h4" component="h1">
             Users

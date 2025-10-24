@@ -10,10 +10,21 @@ import Users from "../pages/Users";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#1976d2",
+      main: "#FEDA3B",
     },
     secondary: {
-      main: "#dc004e",
+      main: "#FD8834",
+    },
+    background: {
+      default: "#0A0A0A",
+      paper: "#1A1A1A",
+    },
+    text: {
+      primary: "#FFFFFF",
+      secondary: "#B0B0B0",
+    },
+    error: {
+      main: "#ff5b5bff",
     },
   },
   typography: {

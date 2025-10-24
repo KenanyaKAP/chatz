@@ -2,7 +2,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap');
 
-/* Set default font for body */
+/* Set default font and background for body */
 body {
   font-family: 'Poppins', sans-serif;
+  background: radial-gradient(ellipse at top left, #030303 0%, #161616 100%);
+  background-attachment: fixed;
 }
