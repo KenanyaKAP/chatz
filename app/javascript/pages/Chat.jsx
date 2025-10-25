@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Container, Drawer, useTheme, useMediaQuery } from "@mui/material";
 import ChatHeader from "../components/chat/ChatHeader";
 import UserList from "../components/chat/UserList";
 import EmptyState from "../components/chat/EmptyState";
 import ChatRoom from "../components/chat/ChatRoom";
+import {
+  subscribeToChatroom,
+  unsubscribeFromChatroom,
+} from "../channels/chatroom_channel";
 
 const Chat = ({ user }) => {
   const navigate = useNavigate();
@@ -19,6 +23,7 @@ const Chat = ({ user }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [currentChatroom, setCurrentChatroom] = useState(null);
+  const subscriptionRef = useRef(null);
 
   const drawerWidth = 280;
 
@@ -69,10 +74,33 @@ const Chat = ({ user }) => {
         } else {
           setMessages([]);
         }
+
+        if (chatroomData?.id) {
+          subscribeToCurrentChatroom(chatroomData.id);
+        }
       }
     } catch (error) {
       console.error("Error fetching chatroom:", error);
     }
+  };
+
+  const subscribeToCurrentChatroom = (chatroomId) => {
+    // Unsubscribe if exists
+    if (subscriptionRef.current) {
+      unsubscribeFromChatroom(subscriptionRef.current);
+    }
+
+    // Subscribe to new chatroom
+    subscriptionRef.current = subscribeToChatroom(
+      chatroomId,
+      user?.id,
+      (data) => {
+        if (data.type === "new_message" && data.message) {
+          // Add new message to the list
+          setMessages((prevMessages) => [...prevMessages, data.message.data]);
+        }
+      }
+    );
   };
 
   // Send new message to Rails API
@@ -96,9 +124,7 @@ const Chat = ({ user }) => {
 
       if (response.ok) {
         setNewMessage("");
-
-        // TODO: Currently refresh chatroom to get updated messages
-        fetchChatroom(selectedUser.id);
+        // No need to refresh - Action Cable will handle the update
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -128,6 +154,13 @@ const Chat = ({ user }) => {
 
   useEffect(() => {
     fetchUsers();
+
+    // Cleanup: unsubscribe when component unmounts
+    return () => {
+      if (subscriptionRef.current) {
+        unsubscribeFromChatroom(subscriptionRef.current);
+      }
+    };
   }, []);
 
   return (

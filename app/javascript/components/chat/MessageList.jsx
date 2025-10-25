@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Typography, Paper } from "@mui/material";
 import ChatBubble from "./ChatBubble";
 
 const MessageList = ({ messages, currentUserId }) => {
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
   console.log("MessageList props:", { messages, currentUserId }); 
   return (
     <Paper
@@ -38,6 +48,7 @@ const MessageList = ({ messages, currentUserId }) => {
               isCurrentUser={message.attributes?.user_id == currentUserId}
             />
           ))}
+          <div ref={messagesEndRef} />
         </Box>
       )}
     </Paper>

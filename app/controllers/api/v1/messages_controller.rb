@@ -61,7 +61,17 @@ module Api
         end
 
         if message.save
-            render json: { status: "Message created", message: MessageSerializer.new(message) }, status: :created
+            # Broadcast the new message to the chatroom channel
+            serialized_message = MessageSerializer.new(message).serializable_hash
+            ActionCable.server.broadcast(
+              "chatroom_#{message.chatroom_id}",
+              {
+                type: 'new_message',
+                message: serialized_message
+              }
+            )
+            
+            render json: { status: "Message created", message: serialized_message }, status: :created
         else
             render json: { error: message.errors.full_messages }, status: :unprocessable_entity
         end
