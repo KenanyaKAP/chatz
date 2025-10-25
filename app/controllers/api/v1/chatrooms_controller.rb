@@ -35,6 +35,7 @@ module Api
       # Get chatroom by ID
       def get_chatroom_by_id(id)
         chatroom = Chatroom.find_by(id: id)
+
         unless chatroom
           render json: { error: "Chatroom not found" }, status: :not_found
           return

@@ -18,6 +18,7 @@ const Chat = ({ user }) => {
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentChatroom, setCurrentChatroom] = useState(null);
 
   const drawerWidth = 280;
 
@@ -45,22 +46,38 @@ const Chat = ({ user }) => {
     }
   };
 
-  // Fetch messages from Rails API
-  const fetchMessages = async () => {
+  // Fetch chatroom and messages for selected user
+  const fetchChatroom = async (selectedUserId) => {
+    if (!user?.id || !selectedUserId || selectedUserId === user.id) return;
+
     try {
-      const response = await fetch("/api/v1/messages");
+      const response = await fetch(
+        `/api/v1/chatrooms?userone_id=${user.id}&usertwo_id=${selectedUserId}`
+      );
       if (response.ok) {
         const data = await response.json();
-        setMessages(data.data || []);
+        const chatroomData = data.data;
+
+        setCurrentChatroom(chatroomData);
+
+        // Extract messages from included data
+        if (data.included) {
+          const messagesData = data.included.filter(
+            (item) => item.type === "message"
+          );
+          setMessages(messagesData);
+        } else {
+          setMessages([]);
+        }
       }
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("Error fetching chatroom:", error);
     }
   };
 
   // Send new message to Rails API
   const sendMessage = async () => {
-    if (!newMessage.trim() || !user?.id) return;
+    if (!newMessage.trim() || !user?.id || !currentChatroom?.id) return;
 
     setLoading(true);
     try {
@@ -71,16 +88,17 @@ const Chat = ({ user }) => {
           "X-CSRF-Token": document.querySelector('[name="csrf-token"]').content,
         },
         body: JSON.stringify({
-          message: {
-            content: newMessage,
-            user_id: user.id,
-          },
+          content: newMessage,
+          chatroom_id: currentChatroom.id,
+          user_id: user.id,
         }),
       });
 
       if (response.ok) {
         setNewMessage("");
-        fetchMessages();
+
+        // TODO: Currently refresh chatroom to get updated messages
+        fetchChatroom(selectedUser.id);
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -95,21 +113,21 @@ const Chat = ({ user }) => {
 
   const handleUserSelect = (selectedUser) => {
     setSelectedUser(selectedUser);
+    // Fetch chatroom when user is selected
+    if (selectedUser && selectedUser.id !== user?.id) {
+      fetchChatroom(selectedUser.id);
+    }
     if (isMobile) {
       setMobileOpen(false);
     }
   };
 
   const handleLogout = () => {
-    // Navigate back to home page
     navigate("/");
   };
 
   useEffect(() => {
-    fetchMessages();
     fetchUsers();
-    const interval = setInterval(fetchMessages, 3000);
-    return () => clearInterval(interval);
   }, []);
 
   return (
