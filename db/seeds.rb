@@ -20,10 +20,10 @@ chatrooms = Chatroom.create([
   { userone: users[0], usertwo: users[2] }
 ])
 
-# messages = Message.create([
-#   { chatroom: chatrooms[0], user: users[0], content: "Hey Alice!" },
-#   { chatroom: chatrooms[0], user: users[1], content: "Yo, hi Boteng!" },
-#   { chatroom: chatrooms[1], user: users[1], content: "Hey Bob!" },
-#   { chatroom: chatrooms[1], user: users[2], content: "Hi Alice!" },
-#   { chatroom: chatrooms[2], user: users[2], content: "Hello there Boteng, Im Bob!" }
-# ])
+messages = Message.create([
+  { chatroom: chatrooms[0], user: users[0], content: "Hey Alice!" },
+  { chatroom: chatrooms[0], user: users[1], content: "Yo, hi Boteng!" },
+  { chatroom: chatrooms[1], user: users[1], content: "Hey Bob!" },
+  { chatroom: chatrooms[1], user: users[2], content: "Hi Alice!" },
+  { chatroom: chatrooms[2], user: users[2], content: "Hello there Boteng, Im Bob!" }
+])
