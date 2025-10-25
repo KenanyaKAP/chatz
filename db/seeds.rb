@@ -14,9 +14,16 @@ users = User.create([
   { username: "bob", fullname: "Bob Builder" }
 ])
 
+chatrooms = Chatroom.create([
+  { userone_id: users[0].id, usertwo_id: users[1].id },
+  { userone_id: users[1].id, usertwo_id: users[2].id },
+  { userone_id: users[0].id, usertwo_id: users[2].id }
+])
+
 messages = Message.create([
-  { sender: users[0], recipient: users[1], content: "Hey Alice!" },
-  { sender: users[1], recipient: users[0], content: "Yo, hi Boteng!" },
-  { sender: users[0], recipient: users[2], content: "Hey Bob!" },
-  { sender: users[2], recipient: users[1], content: "Hi Alice!" }
+  { chatroom_id: chatrooms[0].id, user_id: users[0].id, content: "Hey Alice!" },
+  { chatroom_id: chatrooms[0].id, user_id: users[1].id, content: "Yo, hi Boteng!" },
+  { chatroom_id: chatrooms[1].id, user_id: users[1].id, content: "Hey Bob!" },
+  { chatroom_id: chatrooms[1].id, user_id: users[2].id, content: "Hi Alice!" },
+  { chatroom_id: chatrooms[2].id, user_id: users[2].id, content: "Hello there Boteng, Im Bob!" }
 ])
