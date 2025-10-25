@@ -12,6 +12,7 @@ const ChatRoom = ({
   setNewMessage,
   onSendMessage,
   loading,
+  currentUserId,
 }) => {
   return (
     <Box
@@ -23,7 +24,7 @@ const ChatRoom = ({
       }}
     >
       <ChatRoomHeader selectedUser={selectedUser} users={users} />
-      <MessageList messages={messages} />
+      <MessageList messages={messages} currentUserId={currentUserId} />
       <MessageInput
         newMessage={newMessage}
         setNewMessage={setNewMessage}

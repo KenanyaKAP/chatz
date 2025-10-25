@@ -18,6 +18,7 @@ const theme = createTheme({
       default: "#0A0A0A",
       paper: "#1A1A1A",
       light: "#3a3a3aff",
+      morelight: "#4e4e4eff",
     },
     text: {
       primary: "#FFFFFF",

@@ -202,6 +202,7 @@ const Chat = ({ user }) => {
                 setNewMessage={setNewMessage}
                 onSendMessage={sendMessage}
                 loading={loading}
+                currentUserId={user?.id}
               />
             )}
           </Box>

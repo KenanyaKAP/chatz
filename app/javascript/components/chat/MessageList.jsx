@@ -1,16 +1,9 @@
 import React from "react";
-import {
-  List,
-  ListItem,
-  ListItemText,
-  Avatar,
-  Typography,
-  Divider,
-  Paper,
-} from "@mui/material";
-import { Person as PersonIcon } from "@mui/icons-material";
+import { Box, Typography, Paper } from "@mui/material";
+import ChatBubble from "./ChatBubble";
 
-const MessageList = ({ messages }) => {
+const MessageList = ({ messages, currentUserId }) => {
+  console.log("MessageList props:", { messages, currentUserId }); 
   return (
     <Paper
       elevation={3}
@@ -22,40 +15,31 @@ const MessageList = ({ messages }) => {
         minHeight: 0,
       }}
     >
-      <List>
-        {messages.length === 0 ? (
-          <ListItem>
-            <ListItemText
-              primary="No messages yet"
-              secondary="Start the conversation!"
+      {messages.length === 0 ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+            minHeight: "200px",
+          }}
+        >
+          <Typography variant="body1" color="text.secondary">
+            No messages yet. Start the conversation!
+          </Typography>
+        </Box>
+      ) : (
+        <Box>
+          {messages.map((message) => (
+            <ChatBubble
+              key={message.id}
+              message={message}
+              isCurrentUser={message.attributes?.user_id == currentUserId}
             />
-          </ListItem>
-        ) : (
-          messages.map((message) => (
-            <div key={message.id}>
-              <ListItem alignItems="flex-start">
-                <Avatar sx={{ mr: 2, bgcolor: "primary.main" }}>
-                  <PersonIcon />
-                </Avatar>
-                <ListItemText
-                  primary={
-                    <Typography variant="subtitle2" color="text.primary">
-                      {message.attributes?.user_name ||
-                        `User ${message.attributes?.user_id}`}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography variant="body2" color="text.secondary">
-                      {message.attributes?.content}
-                    </Typography>
-                  }
-                />
-              </ListItem>
-              <Divider variant="inset" component="li" />
-            </div>
-          ))
-        )}
-      </List>
+          ))}
+        </Box>
+      )}
     </Paper>
   );
 };
