@@ -90,8 +90,9 @@ test:
 production:
   primary: &primary_production
     <<: *default
+    host: <%= ENV["CHATZ_DATABASE_HOST"] %>
     database: chatz_production
-    username: chatz
+    username: <%= ENV["CHATZ_DATABASE_USER"] %>
     password: <%= ENV["CHATZ_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production

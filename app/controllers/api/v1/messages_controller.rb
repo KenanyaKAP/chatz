@@ -1,7 +1,7 @@
 module Api
   module V1
     class MessagesController < ApplicationController
-      protect_from_forgery with: :null_session
+      # protect_from_forgery with: :null_session
 
       # ========================= OLD METHOD =========================
       # def create

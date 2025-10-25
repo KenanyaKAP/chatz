@@ -2,10 +2,41 @@ services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_DB: chatz_development
-      POSTGRES_USER: chatz
-      POSTGRES_PASSWORD: chatzi@123
+      POSTGRES_DB: chatz_production
+      # POSTGRES_USER: chatz    # For development
+      POSTGRES_USER: ${CHATZ_DATABASE_USER}
+      # POSTGRES_PASSWORD: chatzi@123    # For development
+      POSTGRES_PASSWORD: ${CHATZ_DATABASE_PASSWORD}
     volumes:
-      - ~/Documents/docker-volumes/chatz_db:/var/lib/postgresql/data
+      - ${DB_PATH}:/var/lib/postgresql/data
+    # ports:    # Forward for development
+    #   - "6543:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${CHATZ_DATABASE_USER} -d chatz_production"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      cache_from:
+        - web:latest
     ports:
-      - "6543:5432"
+      - "${PORT}:80"
+    environment:
+      RAILS_ENV: production
+      CHATZ_DATABASE_HOST: db
+      CHATZ_DATABASE_USER: ${CHATZ_DATABASE_USER}
+      CHATZ_DATABASE_PASSWORD: ${CHATZ_DATABASE_PASSWORD}
+      RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      bash -c "
+        ./bin/rails db:prepare &&
+        ./bin/thrust ./bin/rails server
+      "
