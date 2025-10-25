@@ -5,7 +5,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import Layout from "./Layout";
 import Home from "../pages/Home";
 import Chat from "../pages/Chat";
-import Users from "../pages/Users";
 
 const theme = createTheme({
   palette: {
@@ -61,7 +60,6 @@ const App = () => {
             element={<Home setSelectedUser={handleSetSelectedUser} />}
           />
           <Route path="/chat" element={<Chat user={selectedUser} />} />
-          <Route path="/users" element={<Users />} />
         </Routes>
         {/* </Layout> */}
       </Router>
