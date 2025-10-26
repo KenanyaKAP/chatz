@@ -49,6 +49,9 @@ RUN bundle install && \
 # Copy application code
 COPY . .
 
+# Ensure bin scripts are executable
+RUN chmod +x bin/*
+
 # Install JavaScript dependencies
 RUN npm install
 
